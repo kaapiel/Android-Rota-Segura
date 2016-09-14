@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Rota Segura</string>
+    <string name="title_activity_rota_segura">Map</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Senha</string>
+    <string name="prompt_confirm_password">Confirmar Senha</string>
+    <string name="action_sign_in">Logar com email</string>
+    <string name="action_sign_in_annonymous">Navegar anonimamente</string>
+    <string name="action_sign_in_short">Logar</string>
+    <string name="error_invalid_email">Este endereço de email é inválido</string>
+    <string name="error_invalid_password">Esta senha não atende aos requisitos mínimos</string>
+    <string name="error_incorrect_password">A senha está incorreta</string>
+    <string name="error_field_required">Este campo é obrigatório</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="action_register">Realizar cadastro</string>
+
+    <string name="facebook_app_id">911728215627539</string>
+    <string name="prompt_nome">Nome</string>
+    <string name="prompt_numero">Numero</string>
+
+</resources>

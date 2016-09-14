@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "277221122593",
+    "firebase_url": "https://rota-segura-e01ad.firebaseio.com",
+    "project_id": "rota-segura-e01ad",
+    "storage_bucket": "rota-segura-e01ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277221122593:android:6c2671883466113d",
+        "android_client_info": {
+          "package_name": "br.com.fatec.tcc.rotasegura"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277221122593-dv033kmeu5pu4ds073bfebnlvjql0i6j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw8IOgbM4SqLmD8xBruXifkahUSorm8s4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
