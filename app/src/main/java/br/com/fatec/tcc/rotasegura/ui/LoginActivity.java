@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String TAG = "TAG_ROTA-SEGURA";
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+    private RelativeLayout loadingContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         AppEventsLogger.activateApp(this);
+
+        loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
@@ -123,7 +127,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                loadingContent.setVisibility(View.VISIBLE);
                 attemptLogin();
+                loadingContent.setVisibility(View.GONE);
             }
         });
 
@@ -136,6 +143,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         annonymousButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                loadingContent.setVisibility(View.VISIBLE);
 
                 mAuth.signInAnonymously()
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -152,6 +161,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 }
                             }
                         });
+
+                loadingContent.setVisibility(View.GONE);
             }
         });
 

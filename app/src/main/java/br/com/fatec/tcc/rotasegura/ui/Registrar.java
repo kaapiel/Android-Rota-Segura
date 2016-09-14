@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,11 +40,15 @@ public class Registrar extends AppCompatActivity{
     private String TAG = "Registrar_Activity";
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("usuarios");
     private int usuarios = 0;
+    private String alterarUsuarioIndex;
+    private RelativeLayout loadingContent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_cadastro);
+
+        loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
         editNome = (EditText) findViewById(R.id.registrar_nome);
         editEmail = (EditText) findViewById(R.id.registrar_email);
@@ -103,9 +108,10 @@ public class Registrar extends AppCompatActivity{
             @Override
             public void onClick(View v) {
 
+                loadingContent.setVisibility(View.VISIBLE);
                 Query query = null;
                 try{
-                    query = myRef.orderByChild(mAuth.getCurrentUser().getUid());
+                    query = myRef.orderByChild("email").equalTo(editEmail.getText().toString());
                 }catch (NullPointerException npe){
                     return;
                 }
@@ -113,12 +119,14 @@ public class Registrar extends AppCompatActivity{
                 query.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        alterarUsuarioIndex = dataSnapshot.getKey();
                         Usuario user = dataSnapshot.getValue(Usuario.class);
 
                         if(user == null){
 
-                            new Mensagens(Registrar.this).toastMensagem("Você ainda não criou um usuário!",
+                            new Mensagens(Registrar.this).toastMensagem("Email não encontrado!",
                                     0, 0, 1, R.drawable.com_facebook_button_like_icon_selected).show();
+                            loadingContent.setVisibility(View.GONE);
                             return;
                         }
 
@@ -129,6 +137,7 @@ public class Registrar extends AppCompatActivity{
                         botaoEnviar.setText("Atualizar cadastro");
                         botaoExcluir.setEnabled(true);
 
+                        loadingContent.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -159,6 +168,7 @@ public class Registrar extends AppCompatActivity{
             @Override
             public void onClick(View v) {
 
+                loadingContent.setVisibility(View.VISIBLE);
                 if(validations()){
 
                     mAuth.createUserWithEmailAndPassword(editEmail.getText().toString(), editSenha.getText().toString())
@@ -166,22 +176,32 @@ public class Registrar extends AppCompatActivity{
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            if (!task.isSuccessful()) {
+                            if (!task.isSuccessful()) { //ATUALIZAR
 
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("nome").setValue(editNome.getText().toString());
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("email").setValue(editEmail.getText().toString());
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("senha").setValue(editSenha.getText().toString());
+                                if(task.getException().getMessage().contains("address is badly")){
+                                    new Mensagens(Registrar.this).toastMensagem(task.getException().getMessage(), 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
+                                    loadingContent.setVisibility(View.GONE);
+                                    return;
+                                }
+
+                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("nome").setValue(editNome.getText().toString());
+                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("email").setValue(editEmail.getText().toString());
+                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("senha").setValue(editSenha.getText().toString());
+
+                                loadingContent.setVisibility(View.GONE);
 
                                 new Mensagens(Registrar.this).toastMensagem("Usuario Atualizado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
                                 Intent i = new Intent(Registrar.this, LoginActivity.class);
                                 startActivity(i);
                                 finish();
 
-                            } else {
+                            } else { //CADASTRAR
 
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("nome").setValue(editNome.getText().toString());
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("email").setValue(editEmail.getText().toString());
-                                myRef.child(mAuth.getCurrentUser().getUid()).child("senha").setValue(editSenha.getText().toString());
+                                myRef.child(String.valueOf(usuarios+1)).child("nome").setValue(editNome.getText().toString());
+                                myRef.child(String.valueOf(usuarios+1)).child("email").setValue(editEmail.getText().toString());
+                                myRef.child(String.valueOf(usuarios+1)).child("senha").setValue(editSenha.getText().toString());
+
+                                loadingContent.setVisibility(View.GONE);
 
                                 new Mensagens(Registrar.this).toastMensagem("Usuario cadastrado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
                                 Intent i = new Intent(Registrar.this, LoginActivity.class);

@@ -134,4 +134,7 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <include layout="@layout/loading" />
+
 </LinearLayout>
