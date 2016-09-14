@@ -30,8 +30,10 @@ public class OcorrenciasLN {
 
     public ArrayList<Denuncia> obterOcorrencias() throws IOException, JSONException {
 
+        //Acessa o site ondefuirobado e obtem um json com todas as ocorrencias
         Document doc = Jsoup.connect("http://www.ondefuiroubado.com.br/sao-paulo/SP/").timeout(0).get();
 
+        //Faz um split no elemento ""initialize" do jsoon para poder facilitar o parse
         String[] split = doc.toString().split("initialize");
         String[] json = split[1].split("\\);");
         String substring = json[0].substring(1);
@@ -39,6 +41,7 @@ public class OcorrenciasLN {
         JSONArray ja = new JSONArray(substring);
         ArrayList<Denuncia> ds = new ArrayList<Denuncia>();
 
+        //pra cada elemento do array, encontra os elementos das denuncias e popula uma lista de Denuncias
         for (int i = 0; i < ja.length(); i++) {
             Denuncia d = new Denuncia();
             d.setLatitude(ja.getJSONObject(i).getDouble("latitude"));
@@ -53,6 +56,7 @@ public class OcorrenciasLN {
         return ds;
     }
 
+    //Método responsável pra obter as rotas em json pela API - Google Directions
     public String getJsonRoutes(Activity a, LatLng destino, LatLng origem) throws IOException {
 
         URL obj = new URL("https://maps.googleapis.com/maps/api/directions/" +
@@ -84,6 +88,7 @@ public class OcorrenciasLN {
         }
         in.close();
 
+        //retorna o JSON obtido do serviço da google directions
         return response.toString();
     }
 

@@ -39,8 +39,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,6 +63,7 @@ import br.com.fatec.tcc.rotasegura.utils.Mensagens;
 
 public class Filtros extends AppCompatActivity {
 
+    //declaração de variaveis globais
     EditText destinoText;
     Button botao;
     private LocationManager mLocationManager;
@@ -67,15 +72,20 @@ public class Filtros extends AppCompatActivity {
     private CheckBox checkArrastao, checkArrVeic, checkFurtos, checkRoubos, checkRouboVeic, checkSeqRelamp;
     private RelativeLayout loadingContent;
 
+    //para enter o ciclo de vida de uma aplicação android, veja esta imagem:  http://img.mukewang.com/5799de6e000141a205580674.jpg
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filtros);
 
+        //instancia do layout de 'carregando'
         loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
+        //Instance do objeto para poder obter a localização atual
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        //caso a versão android seja maior que M (marshmallow),
+        // é necessário fazer a verificação em runtime ao invés de declarar no manifest.xml
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -110,13 +120,18 @@ public class Filtros extends AppCompatActivity {
 
         }
 
+        //fazer a request de localização para android versão maior que Marshmallow
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
 
+        //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
         lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+        //obtem em tempo real as latitudes e longitudes a cada movimento do individuo através do listener 'lgps' ou 'lntw'
+        //obs.: listeners são 'escutadores'. São métodos que ficam aguardando SEMPRE se há alguma alteração, enquanto
+        //o aplicativo estiver aberto;
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, lgps);
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, lntw);
 
@@ -143,6 +158,8 @@ public class Filtros extends AppCompatActivity {
                             e.printStackTrace();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -151,7 +168,7 @@ public class Filtros extends AppCompatActivity {
         });
     }
 
-    public void irParaMapa() throws IOException, JSONException {
+    public void irParaMapa() throws IOException, JSONException, ParseException {
 
         this.runOnUiThread(new Runnable() {
             @Override
@@ -161,6 +178,7 @@ public class Filtros extends AppCompatActivity {
             }
         });
 
+        //valida se o campo do destino esta vazio
         if (destinoText.getText().toString().equals(null) || destinoText.getText().toString().equals("")) {
 
             Filtros.this.runOnUiThread(new Runnable() {
@@ -174,6 +192,7 @@ public class Filtros extends AppCompatActivity {
             return;
         }
 
+        //valida se não há filtros selecionados
         if (!checkArrastao.isChecked() && !checkArrVeic.isChecked() && !checkFurtos.isChecked()
                 && !checkRoubos.isChecked() && !checkRouboVeic.isChecked() && !checkSeqRelamp.isChecked()) {
 
@@ -196,9 +215,11 @@ public class Filtros extends AppCompatActivity {
         fcb.setRoubVeic(checkRouboVeic.isChecked());
         fcb.setSeqRelam(checkSeqRelamp.isChecked());
 
+        //método getCoordenadas obtem latitude e longitude através de nome de rua/endereco
         LatLng destino = new Localizador(this).getCoordenadas(destinoText.getText().toString());
         LatLng origem = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 
+        //obtem rotas em json
         String json = new OcorrenciasLN().getJsonRoutes(this, destino, origem);
 
         JSONObject jsonObject = new JSONObject(json);
@@ -206,25 +227,30 @@ public class Filtros extends AppCompatActivity {
 
         ArrayList<Route> rs = new ArrayList<>();
 
+        //para cada rota, transforma em um objeto. A classe Gson faz isso automaticamente atraves do metodo a seguir
         for (int i = 0; i < routes.length(); i++) {
             Route r = new Gson().fromJson(routes.getJSONObject(i).toString(), Route.class);
             rs.add(r);
         }
 
+        //obtem todas as ocorrencias de sao paulo
         ArrayList<Denuncia> denuncias = new OcorrenciasLN().obterOcorrencias();
-        Route route = escolherRotaComMenosOcorrencias(rs, denuncias, fcb);                  //CORE S2 DO SYSTEM
+
+        //coração do sistema. Neste método você obtem a rota com menos ocorrencias;
+        //observação: google maps directions gera de 1 a 3 rotas alternativas para a sua pesquisa de ponto A ao ponto B;
+        Route route = escolherRotaComMenosOcorrencias(rs, denuncias, fcb);
 
         StringBuilder sb = new StringBuilder();
         sb.append("https://maps.google.ch/maps?daddr=");
 
-        for(int i=0; i<route.getLegs().get(0).getSteps().size(); i++){
+        for (int i = 0; i < route.getLegs().get(0).getSteps().size(); i++) {
             sb.append(route.getLegs().get(0).getSteps().get(i).getEndLocation().getLat());
             sb.append(",");
             sb.append(route.getLegs().get(0).getSteps().get(i).getEndLocation().getLng());
             sb.append(" to:");
         }
 
-        sb.delete(sb.length()-4, sb.length());
+        sb.delete(sb.length() - 4, sb.length());
 
         this.runOnUiThread(new Runnable() {
             @Override
@@ -240,9 +266,11 @@ public class Filtros extends AppCompatActivity {
 
     }
 
-    private Route escolherRotaComMenosOcorrencias(ArrayList<Route> rotas, ArrayList<Denuncia> denuncias, FiltroCheckBoxes fcb) {
+    //Método coração do sistema
+    private Route escolherRotaComMenosOcorrencias(ArrayList<Route> rotas, ArrayList<Denuncia> denuncias, FiltroCheckBoxes fcb) throws ParseException {
 
-        if (rotas.size() == 1) {  //se o google maps gerar apenas uma alternativa de rota, o sistema nao perde tempo executando a logica de ocorrencias
+        //se o google maps gerar apenas uma alternativa de rota, o sistema nao perde tempo executando a logica de ocorrencias
+        if (rotas.size() == 1) {
             return rotas.get(0);
         }
 
@@ -251,55 +279,80 @@ public class Filtros extends AppCompatActivity {
                 for (Step s : l.getSteps()) {                                           //PARA CADA STEP DA ROTA
                     for (Denuncia d : denuncias) {                                      //PARA CADA DENUNCIA
 
-                        SimpleDateFormat format = new SimpleDateFormat("MM");
-                        // if(d.getData().contains("-"+format.format(new Date())+"-")){ //PARAMETRO DATA (ULTIMOS 30 DIAS, E NÃO ULTIMO MES
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        Date parse = format.parse(d.getData());
 
-                        Location l2 = new Location("");
-                        l2.setLongitude(d.getLongitude());                              //LOCALIDADE DA DENUNCIA (LATITUDE E LONGITUDE)
-                        l2.setLatitude(d.getLatitude());
+                        Date date = new Date();
+                        Calendar cal = new GregorianCalendar();
+                        cal.setTime(date);
+                        cal.add(Calendar.DAY_OF_MONTH, -30);
 
-                        Location l1 = new Location("");
-                        l1.setLongitude(s.getEndLocation().getLng());                   //LOCALIDADE DA RUA SO STEP, DA PERNA, DA ROTA (LATITUDE E LONGITUDE)
-                        l1.setLatitude(s.getEndLocation().getLat());
+                        //se a data da ocorrencia (em Long) for menor que a data de hoje menos 30 (em Long), então
+                        //a data da ocorrencia passou de 30 dias
+                        if (parse.getTime() > cal.getTime().getTime()) {                //PARAMETRO DATA (ULTIMOS 30 DIAS, E NÃO ULTIMO MES
 
-                        if (l1.distanceTo(l2) <= s.getDistance().getValue() && validarTipos(d.getTipo())) {     //RAIO DE DISTANCIA DO PONTO 'A' AO PONTO 'B' (s.getDistance().getValue() == TAMANHO DA RUA EM METROS)
-                            somarTipos(d.getTipo());
+                            //Desative este comentário para visualizar as datas escolhidas
+                            //Log.e("DATA", String.valueOf(parse.toString()));
+
+                            Location l2 = new Location("");
+                            l2.setLongitude(d.getLongitude());                          //LOCALIDADE DA DENUNCIA (LATITUDE E LONGITUDE)
+                            l2.setLatitude(d.getLatitude());
+
+                            Location l1 = new Location("");
+                            l1.setLongitude(s.getEndLocation().getLng());               //LOCALIDADE DA RUA DO STEP, DA PERNA, DA ROTA (LATITUDE E LONGITUDE)
+                            l1.setLatitude(s.getEndLocation().getLat());
+
+                            //Se a distancia entre a ocorrencia e a localidade do step (em metros) for menor ou igual
+                            //o tamanho da rua do step (em metros) então, existe naquela rua uma ocorrencia (entra no if)
+                            if (l1.distanceTo(l2) <= s.getDistance().getValue() && validarTipos(d.getTipo())) {
+                                somarTipos(d.getTipo());
+                            }
                         }
-                        // }
                     }
                 }
             }
 
+            //Após todos os laços 'for' terminarem, adiciona ao objeto Route as quantidades de ocorrencias
             r.setFurto(furto);
             r.setArrastao(arrastao);
             r.setArrombVeic(arrombVeic);
             r.setRoubo(roubo);
             r.setRoubVeic(roubVeic);
             r.setSeqRelam(seqRelam);
+
+            //Adiciona os filtros (boolean) se estão ativados ou nao;
             r.setFcb(fcb);
+
+            //Após adicionar tudo, zera os numeros para fazer a contagem para a proxima rota
             zerarOcorrencias();
         }
 
-        /**
-         *
-         * coração (s2) do systema
-         *
-         * O objeto routeSelected é sobrescrito toda vez que a rota for melhor (retorno do 'r')
-         *
-         */
+
+        //Aqui mora a regra de negocio do sistema:
+        //O objeto routeSelected é sobrescrito toda vez que a rota for melhor (retorno do 'r').
+        //Se o objecto routeSelected receber 'r', quer dizer que a primeira rota (rotas.get(0))
+        //tem mais ocorrencias do que a routeSelected.
+        //Por outro lado, se o objeto routeSelected não receber nada dentro do laço 'for', a primeira
+        //rota continua sendo a melhor (com menos ocorrencias);
+
         Route routeSelected = rotas.get(0);  //primeira rota
 
         for (Route r : rotas) {
-            if(routeSelected.compareTo(r) == 0){ //routeSelected tem menos ocorrencias
+
+            //o método compareTo, retorna 0 ou 1; Se retornar 0, a instancia routeSelected tem menos ocorrencias.
+            //Por outro lado, se retornar 1, a intancia 'r' tem menos ocorrencias.
+            if (routeSelected.compareTo(r) == 0) {                  //routeSelected tem menos ocorrencias
                 //não faz nada
-            } else if(routeSelected.compareTo(r) == 1) { //r tem menos ocorrencias
+            } else if (routeSelected.compareTo(r) == 1) {           //r tem menos ocorrencias
                 routeSelected = r;
             }
         }
 
+        //retorna a instancia com menos ocorrencias;
         return routeSelected;
     }
 
+    //Zera as ocorrencias para poder realizar outras buscas
     private void zerarOcorrencias() {
         furto = 0;
         arrombVeic = 0;
@@ -328,6 +381,7 @@ public class Filtros extends AppCompatActivity {
         return e;
     }
 
+    //Este método é chamado toda vez que for necessário a solicitação (Android M ou superior) de acesso ao GPS em tempo de execução
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -340,14 +394,14 @@ public class Filtros extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
-                    Log.e("PERMISSÕES", "CONCEDIDAS!!! HEUEHUEHUEHEUHEUEHUEHE");
+                    Log.e("PERMISSÕES", "CONCEDIDAS!!! -------------------------------------------------------");
 
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
-                    Log.e("PERMISSÕES", "NÃO CONCEDIDAS!!! :(");
+                    Log.e("PERMISSÕES", "NÃO CONCEDIDAS!!! ---------------------------------------------------");
                 }
                 return;
             }
@@ -360,13 +414,16 @@ public class Filtros extends AppCompatActivity {
     private boolean validarTipos(String tipo) {
 
         try {
+            //tenta converte para Integer. Se cair na exceção, não conseguiu converter e retorna true;
             Integer.valueOf(tipo);
         } catch (Exception e) { //Não conseguiu converter para int.
             return true;
         }
+        //retorna false caso consiga converter para Integer
         return false;
     }
 
+    //Realiza a soma global das variaveis de ocorrencias
     private void somarTipos(String tipo) {
 
         if (tipo.toLowerCase().contains("arrombamento")) { //Arrombamento
@@ -426,7 +483,6 @@ public class Filtros extends AppCompatActivity {
             lastKnownLocation.setLatitude(location.getLatitude());
             lastKnownLocation.setLongitude(location.getLongitude());
 
-            Log.e("PASSOU AQUI", "-------------------------- GPS");
         }
 
         @Override
@@ -461,7 +517,6 @@ public class Filtros extends AppCompatActivity {
             lastKnownLocation.setLatitude(location.getLatitude());
             lastKnownLocation.setLongitude(location.getLongitude());
 
-            Log.e("PASSOU AQUI", "-------------------------- NETWORK");
         }
 
         @Override

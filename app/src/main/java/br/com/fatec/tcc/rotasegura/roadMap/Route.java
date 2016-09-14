@@ -1,6 +1,8 @@
 
 package br.com.fatec.tcc.rotasegura.roadMap;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,8 @@ import br.com.fatec.tcc.rotasegura.model.FiltroCheckBoxes;
 
 public class Route implements Comparable<Route> {
 
+    //Todas as classes do pacote roarMap foram geradas pelo site http://www.jsonschema2pojo.org/
+    //para poder fazer o parse no json
     private FiltroCheckBoxes fcb;
     private Bounds bounds;
     private String copyrights;
@@ -196,6 +200,9 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        } else {
+            this.arrastao = 0;
+            another.setArrastao(0);
         }
 
         if (another.getFcb().isArrombVeic()) {
@@ -204,6 +211,9 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        } else {
+            this.arrombVeic = 0;
+            another.setArrombVeic(0);
         }
 
         if(another.getFcb().isFurto()){
@@ -212,6 +222,9 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        } else {
+            this.furto = 0;
+            another.setFurto(0);
         }
 
         if(another.getFcb().isRoubo()){
@@ -220,6 +233,9 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        } else {
+            this.roubo = 0;
+            another.setRoubo(0);
         }
 
         if(another.getFcb().isSeqRelam()){
@@ -228,6 +244,9 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        }else {
+            this.seqRelam = 0;
+            another.setSeqRelam(0);
         }
 
         if(another.getFcb().isRoubVeic()){
@@ -236,7 +255,12 @@ public class Route implements Comparable<Route> {
             } else {
                 anotherVotes++;
             }
+        } else {
+            this.roubVeic = 0;
+            another.setRoubVeic(0);
         }
+
+        apresentarQuantidadesDeOcorrenciasPorRota(another);
 
         if (thisVotes < anotherVotes) {
             return 0;                               //0 = THIS TEM MENOS OCORRENCIAS
@@ -248,4 +272,18 @@ public class Route implements Comparable<Route> {
 
         return 0;                                   //NÃO CHEGA NESSA PARTE
     }
+
+    private void apresentarQuantidadesDeOcorrenciasPorRota(Route r) {
+
+        Log.e("ARRASTÃO", String.valueOf(r.getArrastao()));
+        Log.e("ROUBO", String.valueOf(r.getRoubo()));
+        Log.e("FURTO", String.valueOf(r.getFurto()));
+        Log.e("ARROMBAMENTO VEICULAR", String.valueOf(r.getArrombVeic()));
+        Log.e("SEQUESTRO RELAMPAGO", String.valueOf(r.getSeqRelam()));
+        Log.e("ROUBO DE VEICULO", String.valueOf(r.getRoubVeic()));
+
+        Log.e("----", "----------------------");
+
+    }
+
 }

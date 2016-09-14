@@ -5,6 +5,9 @@ package br.com.fatec.tcc.rotasegura.model;
  */
 public class FiltroCheckBoxes {
 
+    //Essa classe foi criada apenas para validar os filtros.
+    //Dentro da classe Route.class, no método compareTo(Route r) ela é usada (apenas nesse método);
+    //Neste método são travadas algumas validações (função dos filtros)
     private boolean furto;
     private boolean arrombVeic;
     private boolean roubo;
