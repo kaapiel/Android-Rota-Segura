@@ -399,6 +399,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "Falha na autenticação: "+task.getException().getMessage().toString(),
                                         Toast.LENGTH_SHORT).show();
+
+                                Log.e("EMAIL", mEmail);
+                                Log.e("SENHA", mPassword);
+
                             } else {
                                 startActivity(new Intent(LoginActivity.this, Filtros.class));
                                 finish();

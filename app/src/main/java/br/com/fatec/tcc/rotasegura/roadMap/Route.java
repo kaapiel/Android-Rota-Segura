@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.fatec.tcc.rotasegura.model.FiltroCheckBoxes;
+
 public class Route implements Comparable<Route> {
 
+    private FiltroCheckBoxes fcb;
     private Bounds bounds;
     private String copyrights;
     private List<Leg> legs = new ArrayList<Leg>();
@@ -18,6 +21,14 @@ public class Route implements Comparable<Route> {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private int furto, arrombVeic, roubo, seqRelam, roubVeic, arrastao;
 
+
+    public FiltroCheckBoxes getFcb() {
+        return fcb;
+    }
+
+    public void setFcb(FiltroCheckBoxes fcb) {
+        this.fcb = fcb;
+    }
 
     public int getFurto() {
         return furto;
@@ -179,47 +190,59 @@ public class Route implements Comparable<Route> {
         int thisVotes = 0;
         int anotherVotes = 0;
 
-        if (this.arrastao < another.arrastao) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if (another.getFcb().isArrastao()) {
+            if (this.arrastao < another.arrastao) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if (this.arrombVeic < another.arrombVeic) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if (another.getFcb().isArrombVeic()) {
+            if (this.arrombVeic < another.arrombVeic) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if (this.furto < another.furto) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if(another.getFcb().isFurto()){
+            if (this.furto < another.furto) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if (this.roubo < another.roubo) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if(another.getFcb().isRoubo()){
+            if (this.roubo < another.roubo) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if (this.seqRelam < another.seqRelam) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if(another.getFcb().isSeqRelam()){
+            if (this.seqRelam < another.seqRelam) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if (this.roubVeic < another.roubVeic) {
-            thisVotes++;
-        } else {
-            anotherVotes++;
+        if(another.getFcb().isRoubVeic()){
+            if (this.roubVeic < another.roubVeic) {
+                thisVotes++;
+            } else {
+                anotherVotes++;
+            }
         }
 
-        if(thisVotes < anotherVotes){
+        if (thisVotes < anotherVotes) {
             return 0;                               //0 = THIS TEM MENOS OCORRENCIAS
-        } else if(thisVotes > anotherVotes){
+        } else if (thisVotes > anotherVotes) {
             return 1;                               //1 = OBJETO COMPARADO TEM MAIS OCORRENCIAS
-        } else if(thisVotes == anotherVotes){
+        } else if (thisVotes == anotherVotes) {
             return 0;                               //TANTO FAZ
         }
 

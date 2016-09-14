@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -64,11 +65,14 @@ public class Filtros extends AppCompatActivity {
     private Location lastKnownLocation;
     private int furto, arrombVeic, roubo, seqRelam, roubVeic, arrastao;
     private CheckBox checkArrastao, checkArrVeic, checkFurtos, checkRoubos, checkRouboVeic, checkSeqRelamp;
+    private RelativeLayout loadingContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filtros);
+
+        loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -149,6 +153,14 @@ public class Filtros extends AppCompatActivity {
 
     public void irParaMapa() throws IOException, JSONException {
 
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingContent.setVisibility(View.VISIBLE);
+                botao.setEnabled(false);
+            }
+        });
+
         if (destinoText.getText().toString().equals(null) || destinoText.getText().toString().equals("")) {
 
             Filtros.this.runOnUiThread(new Runnable() {
@@ -157,6 +169,8 @@ public class Filtros extends AppCompatActivity {
                     new Mensagens(Filtros.this).toastMensagem("Digite um endereço...", 0, 0, 0, R.drawable.ic_cast_dark).show();
                 }
             });
+            loadingContent.setVisibility(View.GONE);
+            botao.setEnabled(true);
             return;
         }
 
@@ -169,6 +183,8 @@ public class Filtros extends AppCompatActivity {
                     new Mensagens(Filtros.this).toastMensagem("Selecione um filtro ao menos...", 0, 0, 0, R.drawable.ic_cast_dark).show();
                 }
             });
+            loadingContent.setVisibility(View.GONE);
+            botao.setEnabled(true);
             return;
         }
 
@@ -196,18 +212,7 @@ public class Filtros extends AppCompatActivity {
         }
 
         ArrayList<Denuncia> denuncias = new OcorrenciasLN().obterOcorrencias();
-        Route route = escolherRotaComMenosOcorrencias(rs, denuncias, fcb);
-
-        Log.e("JSON ARRAY SIZE", String.valueOf(rs.size()));
-
-        //Intent i = new Intent(Filtros.this, RotaSegura.class);
-        //Bundle b = new Bundle();
-        //b.putParcelable("destino", destino);
-        //i.putExtra("denuncias", denuncias);
-        //i.putExtras(b);
-        //startActivity(i);
-        //finish();
-
+        Route route = escolherRotaComMenosOcorrencias(rs, denuncias, fcb);                  //CORE S2 DO SYSTEM
 
         StringBuilder sb = new StringBuilder();
         sb.append("https://maps.google.ch/maps?daddr=");
@@ -221,7 +226,13 @@ public class Filtros extends AppCompatActivity {
 
         sb.delete(sb.length()-4, sb.length());
 
-        Log.e("PARSE", sb.toString());
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingContent.setVisibility(View.GONE);
+                botao.setEnabled(true);
+            }
+        });
 
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse(sb.toString()));
@@ -231,7 +242,7 @@ public class Filtros extends AppCompatActivity {
 
     private Route escolherRotaComMenosOcorrencias(ArrayList<Route> rotas, ArrayList<Denuncia> denuncias, FiltroCheckBoxes fcb) {
 
-        if (rotas.size() == 1) {
+        if (rotas.size() == 1) {  //se o google maps gerar apenas uma alternativa de rota, o sistema nao perde tempo executando a logica de ocorrencias
             return rotas.get(0);
         }
 
@@ -265,15 +276,22 @@ public class Filtros extends AppCompatActivity {
             r.setRoubo(roubo);
             r.setRoubVeic(roubVeic);
             r.setSeqRelam(seqRelam);
-
+            r.setFcb(fcb);
             zerarOcorrencias();
         }
 
+        /**
+         *
+         * coração (s2) do systema
+         *
+         * O objeto routeSelected é sobrescrito toda vez que a rota for melhor (retorno do 'r')
+         *
+         */
         Route routeSelected = rotas.get(0);  //primeira rota
 
         for (Route r : rotas) {
             if(routeSelected.compareTo(r) == 0){ //routeSelected tem menos ocorrencias
-
+                //não faz nada
             } else if(routeSelected.compareTo(r) == 1) { //r tem menos ocorrencias
                 routeSelected = r;
             }
