@@ -84,6 +84,10 @@ public class Filtros extends AppCompatActivity {
         //Instance do objeto para poder obter a localização atual
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
+        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         //caso a versão android seja maior que M (marshmallow),
         // é necessário fazer a verificação em runtime ao invés de declarar no manifest.xml
         if (ContextCompat.checkSelfPermission(this,
@@ -124,10 +128,6 @@ public class Filtros extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
-
-        //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
-        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         //obtem em tempo real as latitudes e longitudes a cada movimento do individuo através do listener 'lgps' ou 'lntw'
         //obs.: listeners são 'escutadores'. São métodos que ficam aguardando SEMPRE se há alguma alteração, enquanto

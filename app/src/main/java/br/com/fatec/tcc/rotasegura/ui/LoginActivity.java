@@ -84,8 +84,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
 
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_READ_CONTACTS);
 
@@ -127,10 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                loadingContent.setVisibility(View.VISIBLE);
                 attemptLogin();
-                loadingContent.setVisibility(View.GONE);
             }
         });
 
@@ -152,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Falha na Autenticação: "+task.getException().getMessage().toString(),
+                                    Toast.makeText(LoginActivity.this, "Falha na Autenticação: " + task.getException().getMessage().toString(),
                                             Toast.LENGTH_LONG).show();
                                 } else {
                                     Intent i = new Intent(LoginActivity.this, Filtros.class);
@@ -250,13 +247,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
@@ -269,31 +259,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
-            cancel = true;
+            return;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            return;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
-            cancel = true;
+            return;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
-            cancel = true;
+            return;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        }
+        // Show a progress spinner, and kick off a background task to
+        // perform the user login attempt.
+        loadingContent.setVisibility(View.VISIBLE);
+        mAuthTask = new UserLoginTask(email, password);
+        mAuthTask.execute((Void) null);
+
     }
 
     private boolean isEmailValid(String email) {
@@ -303,7 +295,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 5;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -408,11 +400,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Falha na autenticação: "+task.getException().getMessage().toString(),
+                                Toast.makeText(LoginActivity.this, "Falha na autenticação: " + task.getException().getMessage().toString(),
                                         Toast.LENGTH_SHORT).show();
-
-                                Log.e("EMAIL", mEmail);
-                                Log.e("SENHA", mPassword);
 
                             } else {
                                 startActivity(new Intent(LoginActivity.this, Filtros.class));
@@ -420,16 +409,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             }
                         }
                     });
-            return false;
+        return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+            loadingContent.setVisibility(View.GONE);
 
             if (success) {
-                finish();
+
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
@@ -462,21 +451,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Falha na Autenticação: "+task.getException().getMessage().toString(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, "Falha na Autenticação: " + task.getException().getMessage().toString(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
 
-                            Intent i = new Intent(LoginActivity.this, Filtros.class);
-                            startActivity(i);
-                            finish();
+                    Intent i = new Intent(LoginActivity.this, Filtros.class);
+                    startActivity(i);
+                    finish();
 
-                        }
-                    }
-                });
+                }
+            }
+        });
     }
 
     @Override
