@@ -25,12 +25,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FacebookAuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -63,7 +67,6 @@ import br.com.fatec.tcc.rotasegura.utils.Mensagens;
 
 public class Filtros extends AppCompatActivity {
 
-    //declaração de variaveis globais
     EditText destinoText;
     Button botao;
     private LocationManager mLocationManager;
@@ -71,12 +74,18 @@ public class Filtros extends AppCompatActivity {
     private int furto, arrombVeic, roubo, seqRelam, roubVeic, arrastao;
     private CheckBox checkArrastao, checkArrVeic, checkFurtos, checkRoubos, checkRouboVeic, checkSeqRelamp;
     private RelativeLayout loadingContent;
+    private FirebaseAuth mAuth;
 
     //para enter o ciclo de vida de uma aplicação android, veja esta imagem:  http://img.mukewang.com/5799de6e000141a205580674.jpg
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filtros);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        new Mensagens(this).toastMensagem(
+                mAuth.getCurrentUser().getDisplayName() == null ? "Bem-vindo !" : "Bem-vindo "+mAuth.getCurrentUser().getDisplayName(), 0, 0, 1, R.drawable.com_facebook_auth_dialog_background).show();
 
         //instancia do layout de 'carregando'
         loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
@@ -85,8 +94,8 @@ public class Filtros extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
-        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        //lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         //caso a versão android seja maior que M (marshmallow),
         // é necessário fazer a verificação em runtime ao invés de declarar no manifest.xml
@@ -132,8 +141,8 @@ public class Filtros extends AppCompatActivity {
         //obtem em tempo real as latitudes e longitudes a cada movimento do individuo através do listener 'lgps' ou 'lntw'
         //obs.: listeners são 'escutadores'. São métodos que ficam aguardando SEMPRE se há alguma alteração, enquanto
         //o aplicativo estiver aberto;
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, lgps);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, lntw);
+        //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, lgps);
+        //mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, lntw);
 
         destinoText = (EditText) findViewById(R.id.editDestino);
         botao = (Button) findViewById(R.id.botaoIrParaMapa);
@@ -545,4 +554,11 @@ public class Filtros extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mAuth.signOut();
+        startActivity(new Intent(Filtros.this, LoginActivity.class));
+        finish();
+    }
 }

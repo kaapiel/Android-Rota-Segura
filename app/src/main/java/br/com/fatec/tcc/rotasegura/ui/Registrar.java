@@ -34,7 +34,7 @@ import br.com.fatec.tcc.rotasegura.utils.Mensagens;
 
 public class Registrar extends AppCompatActivity{
 
-    private EditText editEmail, editSenha, editNome, editConfirmSenha;
+    private EditText editEmail, editSenha, editNome, editConfirmSenha, editNumero;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String TAG = "Registrar_Activity";
@@ -50,6 +50,7 @@ public class Registrar extends AppCompatActivity{
 
         loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
 
+        editNumero = (EditText) findViewById(R.id.editTextNumero);
         editNome = (EditText) findViewById(R.id.registrar_nome);
         editEmail = (EditText) findViewById(R.id.registrar_email);
         editSenha = (EditText) findViewById(R.id.registrar_senha);
@@ -91,9 +92,6 @@ public class Registrar extends AppCompatActivity{
                             myRef.child(mAuth.getCurrentUser().getUid()).removeValue();
                             startActivity(new Intent(Registrar.this, LoginActivity.class));
                             finish();
-
-                        } else {
-                            //TODO: LÓGICA DE ALTERAÇÃO DE PERCURSO
                         }
                     }
                 });
@@ -184,6 +182,7 @@ public class Registrar extends AppCompatActivity{
                                     return;
                                 }
 
+                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("numero").setValue(editNumero.getText().toString());
                                 myRef.child(String.valueOf(alterarUsuarioIndex)).child("nome").setValue(editNome.getText().toString());
                                 myRef.child(String.valueOf(alterarUsuarioIndex)).child("email").setValue(editEmail.getText().toString());
                                 myRef.child(String.valueOf(alterarUsuarioIndex)).child("senha").setValue(editSenha.getText().toString());
@@ -197,6 +196,7 @@ public class Registrar extends AppCompatActivity{
 
                             } else { //CADASTRAR
 
+                                myRef.child(String.valueOf(usuarios+1)).child("numero").setValue(editNumero.getText().toString());
                                 myRef.child(String.valueOf(usuarios+1)).child("nome").setValue(editNome.getText().toString());
                                 myRef.child(String.valueOf(usuarios+1)).child("email").setValue(editEmail.getText().toString());
                                 myRef.child(String.valueOf(usuarios+1)).child("senha").setValue(editSenha.getText().toString());

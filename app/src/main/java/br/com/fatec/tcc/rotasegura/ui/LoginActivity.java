@@ -92,6 +92,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         mAuth = FirebaseAuth.getInstance();
+        mAuth.getInstance().signOut();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -100,8 +101,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (user != null) {
                     Log.e(TAG, "onAuthStateChanged:signed_in: " + user.getUid());
 
-//                    new Mensagens(LoginActivity.this).toastMensagem("Bem vindo "+user.getDisplayName()+". Você logou com Facebook.",
-//                            0,0,0, R.drawable.common_google_signin_btn_icon_dark).show();
+                    startActivity(new Intent(LoginActivity.this, Filtros.class));
+                    finish();
+
                 } else {
                     Log.e(TAG, "onAuthStateChanged:signed_out");
                 }
@@ -127,6 +129,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 attemptLogin();
             }
         });
@@ -285,6 +289,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         loadingContent.setVisibility(View.VISIBLE);
         mAuthTask = new UserLoginTask(email, password);
         mAuthTask.execute((Void) null);
+
+    }
+
+    private void attemptLoginNumber(){
+
 
     }
 
@@ -472,6 +481,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onDestroy() {
         super.onDestroy();
         mAuth.signOut();
+
+
     }
 
 

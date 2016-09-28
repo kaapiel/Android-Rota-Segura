@@ -42,6 +42,19 @@
                 android:maxLines="1"
                 android:singleLine="true" />
 
+            <EditText
+                android:id="@+id/editTextNumero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_numero"
+                android:imeActionId="@+id/nome"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:layout_gravity="center_horizontal" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
