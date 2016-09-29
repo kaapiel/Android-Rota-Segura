@@ -126,11 +126,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+
+        assert mEmailSignInButton != null;
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 attemptLogin();
             }
         });
@@ -289,11 +289,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         loadingContent.setVisibility(View.VISIBLE);
         mAuthTask = new UserLoginTask(email, password);
         mAuthTask.execute((Void) null);
-
-    }
-
-    private void attemptLoginNumber(){
-
 
     }
 

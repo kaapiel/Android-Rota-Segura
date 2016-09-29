@@ -32,7 +32,7 @@ import br.com.fatec.tcc.rotasegura.R;
 import br.com.fatec.tcc.rotasegura.model.Usuario;
 import br.com.fatec.tcc.rotasegura.utils.Mensagens;
 
-public class Registrar extends AppCompatActivity{
+public class Registrar extends AppCompatActivity {
 
     private EditText editEmail, editSenha, editNome, editConfirmSenha, editNumero;
     private FirebaseAuth mAuth;
@@ -82,17 +82,16 @@ public class Registrar extends AppCompatActivity{
                 AlertDialog.Builder alert = new AlertDialog.Builder(Registrar.this);
                 alert.setTitle("Exclusão de usuário");
                 //alert.setIcon(R.drawable.ic_splash_preto);
-                alert.setMessage("Você tem certeza que deseja excluir o usuário "+editNome.getText()+" ?");
+                alert.setMessage("Você tem certeza que deseja excluir o usuário " + editNome.getText() + " ?");
                 alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        if(mAuth.getCurrentUser().getUid() != null){
-                            myRef.child(mAuth.getCurrentUser().getUid()).removeValue();
-                            startActivity(new Intent(Registrar.this, LoginActivity.class));
-                            finish();
-                        }
+                        myRef.child(alterarUsuarioIndex).removeValue();
+                        startActivity(new Intent(Registrar.this, LoginActivity.class));
+                        finish();
+
                     }
                 });
                 alert.setNegativeButton("Não", null);
@@ -108,9 +107,9 @@ public class Registrar extends AppCompatActivity{
 
                 loadingContent.setVisibility(View.VISIBLE);
                 Query query = null;
-                try{
+                try {
                     query = myRef.orderByChild("email").equalTo(editEmail.getText().toString());
-                }catch (NullPointerException npe){
+                } catch (NullPointerException npe) {
                     return;
                 }
 
@@ -120,7 +119,7 @@ public class Registrar extends AppCompatActivity{
                         alterarUsuarioIndex = dataSnapshot.getKey();
                         Usuario user = dataSnapshot.getValue(Usuario.class);
 
-                        if(user == null){
+                        if (user == null) {
 
                             new Mensagens(Registrar.this).toastMensagem("Email não encontrado!",
                                     0, 0, 1, R.drawable.com_facebook_button_like_icon_selected).show();
@@ -131,6 +130,7 @@ public class Registrar extends AppCompatActivity{
                         editEmail.setText(user.getEmail());
                         editSenha.setText(user.getSenha());
                         editNome.setText(user.getNome());
+                        editNumero.setText(user.getNumero());
 
                         botaoEnviar.setText("Atualizar cadastro");
                         botaoExcluir.setEnabled(true);
@@ -167,50 +167,50 @@ public class Registrar extends AppCompatActivity{
             public void onClick(View v) {
 
                 loadingContent.setVisibility(View.VISIBLE);
-                if(validations()){
+                if (validations()) {
 
                     mAuth.createUserWithEmailAndPassword(editEmail.getText().toString(), editSenha.getText().toString())
                             .addOnCompleteListener(Registrar.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            if (!task.isSuccessful()) { //ATUALIZAR
+                                    if (!task.isSuccessful()) { //ATUALIZAR
 
-                                if(task.getException().getMessage().contains("address is badly")){
-                                    new Mensagens(Registrar.this).toastMensagem(task.getException().getMessage(), 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
-                                    loadingContent.setVisibility(View.GONE);
-                                    return;
+                                        if (task.getException().getMessage().contains("address is badly")) {
+                                            new Mensagens(Registrar.this).toastMensagem(task.getException().getMessage(), 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
+                                            loadingContent.setVisibility(View.GONE);
+                                            return;
+                                        }
+
+                                        myRef.child(String.valueOf(alterarUsuarioIndex)).child("numero").setValue(editNumero.getText().toString());
+                                        myRef.child(String.valueOf(alterarUsuarioIndex)).child("nome").setValue(editNome.getText().toString());
+                                        myRef.child(String.valueOf(alterarUsuarioIndex)).child("email").setValue(editEmail.getText().toString());
+                                        myRef.child(String.valueOf(alterarUsuarioIndex)).child("senha").setValue(editSenha.getText().toString());
+
+                                        loadingContent.setVisibility(View.GONE);
+
+                                        new Mensagens(Registrar.this).toastMensagem("Usuario Atualizado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
+                                        Intent i = new Intent(Registrar.this, LoginActivity.class);
+                                        startActivity(i);
+                                        finish();
+
+                                    } else { //CADASTRAR
+
+                                        myRef.child(String.valueOf(usuarios + 1)).child("numero").setValue(editNumero.getText().toString());
+                                        myRef.child(String.valueOf(usuarios + 1)).child("nome").setValue(editNome.getText().toString());
+                                        myRef.child(String.valueOf(usuarios + 1)).child("email").setValue(editEmail.getText().toString());
+                                        myRef.child(String.valueOf(usuarios + 1)).child("senha").setValue(editSenha.getText().toString());
+
+                                        loadingContent.setVisibility(View.GONE);
+
+                                        new Mensagens(Registrar.this).toastMensagem("Usuario cadastrado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
+                                        Intent i = new Intent(Registrar.this, LoginActivity.class);
+                                        startActivity(i);
+                                        finish();
+                                    }
+
                                 }
-
-                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("numero").setValue(editNumero.getText().toString());
-                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("nome").setValue(editNome.getText().toString());
-                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("email").setValue(editEmail.getText().toString());
-                                myRef.child(String.valueOf(alterarUsuarioIndex)).child("senha").setValue(editSenha.getText().toString());
-
-                                loadingContent.setVisibility(View.GONE);
-
-                                new Mensagens(Registrar.this).toastMensagem("Usuario Atualizado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
-                                Intent i = new Intent(Registrar.this, LoginActivity.class);
-                                startActivity(i);
-                                finish();
-
-                            } else { //CADASTRAR
-
-                                myRef.child(String.valueOf(usuarios+1)).child("numero").setValue(editNumero.getText().toString());
-                                myRef.child(String.valueOf(usuarios+1)).child("nome").setValue(editNome.getText().toString());
-                                myRef.child(String.valueOf(usuarios+1)).child("email").setValue(editEmail.getText().toString());
-                                myRef.child(String.valueOf(usuarios+1)).child("senha").setValue(editSenha.getText().toString());
-
-                                loadingContent.setVisibility(View.GONE);
-
-                                new Mensagens(Registrar.this).toastMensagem("Usuario cadastrado!", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
-                                Intent i = new Intent(Registrar.this, LoginActivity.class);
-                                startActivity(i);
-                                finish();
-                            }
-
-                        }
-                    });
+                            });
                 }
             }
         });
@@ -218,10 +218,9 @@ public class Registrar extends AppCompatActivity{
     }
 
 
-
     private boolean validations() {
 
-        if(!editEmail.getText().toString().contains("@")){
+        if (!editEmail.getText().toString().contains("@")) {
             new Mensagens(this).toastMensagem("Email inválido", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
             return false;
         }
@@ -229,30 +228,30 @@ public class Registrar extends AppCompatActivity{
         String s1 = editSenha.getText().toString();
         String s2 = editConfirmSenha.getText().toString();
 
-        if(s1.length() < 6){
+        if (s1.length() < 6) {
             new Mensagens(this).toastMensagem("Senha inválida (Minimo 6 chars)", 0, 0, 0, R.drawable.com_facebook_button_like_icon_selected).show();
             return false;
         }
 
-        if(editEmail.getText().toString().equals(null) | editEmail.getText().toString().equals("") |
+        if (editEmail.getText().toString().equals(null) | editEmail.getText().toString().equals("") |
                 editEmail.getText().toString() == "" | editEmail.getText().toString() == null |
                 editNome.getText().toString().equals(null) | editNome.getText().toString().equals("") |
                 editNome.getText().toString() == "" | editNome.getText().toString() == null |
                 editConfirmSenha.getText().toString().equals(null) | editConfirmSenha.getText().toString().equals("") |
                 editConfirmSenha.getText().toString() == "" | editConfirmSenha.getText().toString() == null |
                 editSenha.getText().toString().equals(null) | editSenha.getText().toString().equals("") |
-                editSenha.getText().toString() == "" | editSenha.getText().toString() == null){
+                editSenha.getText().toString() == "" | editSenha.getText().toString() == null) {
 
             new Mensagens(this).toastMensagem("Não podem haver campos vazios.", 0, 0, 1, R.drawable.com_facebook_button_like_icon_selected).show();
             return false;
         }
 
-          if(!s1.equals(s2)){
-              Log.e("SENHA 1", s1);
-              Log.e("SENHA 2", s2);
-              new Mensagens(this).toastMensagem("As senhas não conferem.", 0, 0, 1, R.drawable.com_facebook_button_like_icon_selected).show();
-              return false;
-          }
+        if (!s1.equals(s2)) {
+            Log.e("SENHA 1", s1);
+            Log.e("SENHA 2", s2);
+            new Mensagens(this).toastMensagem("As senhas não conferem.", 0, 0, 1, R.drawable.com_facebook_button_like_icon_selected).show();
+            return false;
+        }
 
         return true;
     }
@@ -268,7 +267,7 @@ public class Registrar extends AppCompatActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (!task.isSuccessful()) {
-                            Toast.makeText(Registrar.this, "Falha na Autenticação: "+task.getException().getMessage().toString(),
+                            Toast.makeText(Registrar.this, "Falha na Autenticação: " + task.getException().getMessage().toString(),
                                     Toast.LENGTH_LONG).show();
                         } else {
                             Log.e("LOG-IN ", "LOGGED AS ANONYMOUS");
@@ -280,7 +279,8 @@ public class Registrar extends AppCompatActivity{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot users: dataSnapshot.getChildren()) {
+                for (DataSnapshot users : dataSnapshot.getChildren()) {
+                    Log.e("INDEX ", String.valueOf(usuarios));
                     usuarios++;
                 }
 
@@ -301,4 +301,10 @@ public class Registrar extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(Registrar.this, LoginActivity.class));
+        finish();
+    }
 }

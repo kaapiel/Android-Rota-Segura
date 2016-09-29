@@ -54,6 +54,7 @@ import java.util.Locale;
 
 import javax.security.auth.callback.PasswordCallback;
 
+
 import br.com.fatec.tcc.rotasegura.LogicaNegocio.OcorrenciasLN;
 import br.com.fatec.tcc.rotasegura.R;
 import br.com.fatec.tcc.rotasegura.model.Denuncia;
@@ -94,8 +95,8 @@ public class Filtros extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
-        //lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        //lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         //caso a versão android seja maior que M (marshmallow),
         // é necessário fazer a verificação em runtime ao invés de declarar no manifest.xml
@@ -141,8 +142,8 @@ public class Filtros extends AppCompatActivity {
         //obtem em tempo real as latitudes e longitudes a cada movimento do individuo através do listener 'lgps' ou 'lntw'
         //obs.: listeners são 'escutadores'. São métodos que ficam aguardando SEMPRE se há alguma alteração, enquanto
         //o aplicativo estiver aberto;
-        //mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, lgps);
-        //mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, lntw);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, lgps);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, lntw);
 
         destinoText = (EditText) findViewById(R.id.editDestino);
         botao = (Button) findViewById(R.id.botaoIrParaMapa);
