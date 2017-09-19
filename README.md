@@ -11,7 +11,7 @@ para que possamos traçar a melhor rota para o usuário.
 
 ### Este é um repositório privado. Apenas pessoas autorizadas podem realizar alterações. ###
 
-* Android YAutomation
+* Android RotaSegura
 * v0.01
 
 ### O que precisamos ter em mente antes de iniciar as configurações? ###
