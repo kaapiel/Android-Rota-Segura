@@ -1,18 +1,13 @@
-# YAutomation #
+# RotaSegura #
 
-Este é um aplicativo de integração de testes (java/andrid) com a ferramentas que reportam ou gerenciam teste de software. 
-Através desta integração é possível visualizar gráficos pizza, barra, horizontais e de performance. Também é possível
-parametrizar ambientes e configurações de servidores para execução de testes através do app. Este aplicativo funciona 
-perfeitamente com os projetos:
-- ALMIntegration
-- JenkinsIntegration
+Este é um aplicativo de Rotas (GPS) onde é possível visualizar uma de 3 melhores rotas com menor indicação de crimes.
+Uma lógica é realizada através do site http://www.ondefuiroubado.com.br/ onde é possível obter os tipos de crimes e quantidades
+para que possamos traçar a melhor rota para o usuário.
 
-#### Este app é capaz de realizar a monitoração de testes de software para: ####
-* Ferramentas de bug tracking
-* Ferramentas de integração contínua
-* Ferramentas de gerenciamento de casos de testes
-
-Lembrando que tudo isso pertence a camada de customização.
+#### Este app é capaz de realizar: ####
+* Pesquisa de melhor rota com menor indice de crimes
+* Dar a opção de três rotas diferentes
+* Informar e auto-selecionar a melhor rota
 
 ### Este é um repositório privado. Apenas pessoas autorizadas podem realizar alterações. ###
 
@@ -21,10 +16,7 @@ Lembrando que tudo isso pertence a camada de customização.
 
 ### O que precisamos ter em mente antes de iniciar as configurações? ###
 
-* 1 - Ferramentas e tecnologias
-* 2 - Resultado de gráficos
-* 3 - Execução e parametrização
-* 4 - Em desenvolvimento
+* 1 - Usário e senha (credenciais)
 
 ### Contribua conosco ###
 
@@ -36,44 +28,7 @@ Lembrando que tudo isso pertence a camada de customização.
 * Owner/Admin - Gabriel Aguido Fraga
 
 
-## 1 - Ferramentas e tecnologias ##
+## 1 - Usário e senha (credenciais) ##
 
-Estas são as tecnologias e estruturas que utilizamos no projeto:
-- Android/Java 8
-- Gradle
-- Firebase
-	- Real-time database
-	- Push notifications
-		
-			
-## 2 - Resultados de gráficos ##
-
-Todos os gráficos são gerados em tempo de execução e gerenciados pelo processamento do próprio app. 
-É possível realizar testes de:
-- Performane
-- Smoke Test
-- Regression
-- WebServices
-- Database
-- Etc
-Nestes gráficos são possíveis as visualizações de percentuais de testes OK e NOK (gráfico pizza), tempo de execução de 
-cada teste (gráficos de barras horizontais), relatório geral de execuções (gráficos de barras verticais) e performance 
-(gráfico de picos de execuções).
-
-
-## 3 - Execução e parametrização ##
-Para realizar a parametrização, é necessário acessar a página de parametrização de testes, selecionar os filtros e visualizar 
-os bugs para ter ciência da execução dos testes. Dentre os filtros:
-- Ambiente de execução
-- Sprint
-- Host | IP
-Já os bugs dependem da integração da ferramenta de bug tracking. Sugerimos JiraIntegration para entendermos melhor o processo.
-
-## 4 - Em desenvolvimento ##
-
-Estamos trabalhando para as seguintes integrações e funcionalidades:
-- JiraIntegration
-- SlackIntegration
-- Níveis de acesso
-- Push Notifications (fina de execuções)
-- Send Email - (Report de execuções)
+É possivel criar suas credenciais pelo próprio app, ou através da integração com redes sociais.
+Todas estas informações são armazenadas no banco de dados em tempo real Firebase.
