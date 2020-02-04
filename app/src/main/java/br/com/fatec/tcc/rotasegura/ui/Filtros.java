@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,11 +12,11 @@ import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,15 +24,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import com.facebook.FacebookSdk;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FacebookAuthCredential;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 
@@ -42,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,8 +41,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-
-import javax.security.auth.callback.PasswordCallback;
 
 
 import br.com.fatec.tcc.rotasegura.LogicaNegocio.OcorrenciasLN;
@@ -86,7 +74,7 @@ public class Filtros extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         new Mensagens(this).toastMensagem(
-                mAuth.getCurrentUser().getDisplayName() == null ? "Bem-vindo !" : "Bem-vindo "+mAuth.getCurrentUser().getDisplayName(), 0, 0, 1, R.drawable.com_facebook_auth_dialog_background).show();
+                mAuth.getCurrentUser().getDisplayName() == null ? "Bem-vindo !" : "Bem-vindo " + mAuth.getCurrentUser().getDisplayName(), 0, 0, 1, R.drawable.com_facebook_auth_dialog_background).show();
 
         //instancia do layout de 'carregando'
         loadingContent = (RelativeLayout) findViewById(R.id.loading_content);
@@ -95,6 +83,10 @@ public class Filtros extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //obter a ultima posição do pgs conhecida (tanto via GPS como Internet) (Latitude e longitude)
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
@@ -194,7 +186,7 @@ public class Filtros extends AppCompatActivity {
             Filtros.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new Mensagens(Filtros.this).toastMensagem("Digite um endereço...", 0, 0, 0, R.drawable.ic_cast_dark).show();
+                    new Mensagens(Filtros.this).toastMensagem("Digite um endereço...", 0, 0, 0, R.drawable.ic_audiotrack_dark).show();
                 }
             });
             loadingContent.setVisibility(View.GONE);
@@ -209,7 +201,7 @@ public class Filtros extends AppCompatActivity {
             Filtros.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new Mensagens(Filtros.this).toastMensagem("Selecione um filtro ao menos...", 0, 0, 0, R.drawable.ic_cast_dark).show();
+                    new Mensagens(Filtros.this).toastMensagem("Selecione um filtro ao menos...", 0, 0, 0, R.drawable.ic_audiotrack_dark).show();
                 }
             });
             loadingContent.setVisibility(View.GONE);
