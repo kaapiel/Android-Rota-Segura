@@ -1,14 +1,21 @@
 ![banner](https://raw.github.com/kaapiel/Raw-content/master/Automation-Python/app.png)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alm-integration-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=alm-integration-java)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=alm-integration-java&metric=ncloc)](https://sonarcloud.io/dashboard?id=alm-integration-java)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=alm-integration-java&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=alm-integration-java)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=alm-integration-java&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=alm-integration-java)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alm-integration-java&metric=security_rating)](https://sonarcloud.io/dashboard?id=alm-integration-java)
-![CircleCI](https://img.shields.io/circleci/build/github/kaapiel/ALMIntegration-Java/master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rota-segura-android&metric=alert_status)](https://sonarcloud.io/dashboard?id=rota-segura-android)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=rota-segura-android&metric=ncloc)](https://sonarcloud.io/dashboard?id=rota-segura-android)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=rota-segura-android&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=rota-segura-android)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=rota-segura-android&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=rota-segura-android)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=rota-segura-android&metric=security_rating)](https://sonarcloud.io/dashboard?id=rota-segura-android)
+![CircleCI](https://img.shields.io/circleci/build/github/kaapiel/Rota-Segura-Android/master)
 [![API](https://img.shields.io/badge/API-26%2B-green.svg?style=flat)](https://android-arsenal.com/api?level=26)
 
-A powerful & easy to use library for Android
+# RotaSegura #
+This is the Routes (gps) app where you can see the three best routes with the lower crime indicator.
+A logic is done through the api (http://www.ondefuiroubado.com.br) where you can get the quantity and crime type to route the best way to the user.
+
+#### What this app can do? ####
+* Search for the best rute wirh the lowest crime rate
+* Give three route options
+* Select the best of the three option
 
 ## Table of Contents
 1. [Quick Start](#quick-start)
@@ -19,7 +26,7 @@ A powerful & easy to use library for Android
 1. [Creators](#creators)
 
 <h2 id="quick-start">Quick Start :chart_with_upwards_trend:</h2>
-Add the library to your Android project, then check out the examples below!
+Install the app so that you can test it!
 
 <br/>
 
@@ -70,43 +77,4 @@ limitations under the License.
 
 These people rock!
 
-- [Daniel Marques](https://www.linkedin.com/in/dmarques) - Who helped me and encouraged me to take steps further
-- [Rodrigo Franchi](https://www.linkedin.com/in/rodrigo-franchi-817b9339) - Who gave lots of ideas and several ways to solve problems
-- [Rafael Barriento](https://www.linkedin.com/in/rafael-barriento-de-goes-8014b1b1) - Who gave me tons of tech insights to create innovative solutions
-- [Diogo Julião](https://www.linkedin.com/in/diogo-oliveira-4b7a96128) - Who encourage me to whatever ideia i had as an outstading one
-
-
-# RotaSegura #
-
-Este é um aplicativo de Rotas (GPS) onde é possível visualizar uma de 3 melhores rotas com menor indicação de crimes.
-Uma lógica é realizada através do site http://www.ondefuiroubado.com.br/ onde é possível obter os tipos de crimes e quantidades
-para que possamos traçar a melhor rota para o usuário.
-
-#### Este app é capaz de realizar: ####
-* Pesquisa de melhor rota com menor indice de crimes
-* Dar a opção de três rotas diferentes
-* Informar e auto-selecionar a melhor rota
-
-### Este é um repositório privado. Apenas pessoas autorizadas podem realizar alterações. ###
-
-* Android RotaSegura
-* v0.01
-
-### O que precisamos ter em mente antes de iniciar as configurações? ###
-
-* 1 - Usário e senha (credenciais)
-
-### Contribua conosco ###
-
-* Escreva melhorias tanto no framework como na estrutura dos testes
-* A nossa política de code review está em construção
-
-### Entre em contato ###
-
-* Owner/Admin - Gabriel Aguido Fraga
-
-
-## 1 - Usário e senha (credenciais) ##
-
-É possivel criar suas credenciais pelo próprio app, ou através da integração com redes sociais.
-Todas estas informações são armazenadas no banco de dados em tempo real Firebase.
+- [Natasha Dos Reis](https://www.linkedin.com/in/natasha-dos-reis-98987431) - Who encourage me to develop this app and completed the final idea
