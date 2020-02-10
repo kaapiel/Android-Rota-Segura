@@ -32,15 +32,6 @@ Install the app so that you can test it!
 
 <br/>
 
-<h2 id="examples">Examples :eyes:</h2>
-
-![banner](https://raw.github.com/kaapiel/Raw-content/master/Automation-Python/app.png)
-![banner](https://raw.github.com/kaapiel/Raw-content/master/Automation-Python/app.png)
-![banner](https://raw.github.com/kaapiel/Raw-content/master/Automation-Python/app.png)
-![banner](https://raw.github.com/kaapiel/Raw-content/master/Automation-Python/app.png)
-
-<br/>
-
 <h2 id="report">Questions & Issues :thinking:</h2>
 
 This repository's issue tracker is only for bugs and feature requests.  
