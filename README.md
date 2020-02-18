@@ -12,6 +12,12 @@
 This is the Routes (gps) app where you can see the three best routes with the lower crime indicator.
 A logic is done through the api (http://www.ondefuiroubado.com.br) where you can get the quantity and crime type to route the best way to the user.
 
+### To access SonarCloud data use this link: 
+#### https://sonarcloud.io/dashboard?id=rota-segura-android
+
+### To access pipeline and CI data use this link: 
+#### https://circleci.com/gh/kaapiel/Rota-Segura-Android
+
 #### What this app can do? ####
 * Search for the best rute wirh the lowest crime rate
 * Give three route options
